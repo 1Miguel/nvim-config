@@ -43,6 +43,7 @@
 build/
 Build/
 build-*/
+obj_dir/
 
 # CMake generated files
 CMakeFiles/
@@ -67,3 +68,18 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+
+# Verilator generated files and simulation artifacts
+verilated.cpp
+verilated.h
+verilated.mk
+verilated_config.h
+verilated_dpi.cpp
+verilated_dpi.h
+verilated_vcd_c.cpp
+verilated_vcd_c.h
+coverage.dat
+*.vcd
+*.fst
+*.ghw
+*.lxt

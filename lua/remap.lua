@@ -10,11 +10,17 @@ vim.keymap.set("t", "<Esc>", "<C-\\><C-n>")
 
 -- Terminal open bindings
 vim.api.nvim_create_autocmd("TermOpen", {
-        group = vim.api.nvim_create_augroup("custom-term-open", { clear = true }),
-        callback = function()
-                -- disable number at terminal ... not to make it awkward
-                -- use window-local options so global preferences are preserved
-                vim.wo.number = false
-                vim.wo.relativenumber = false
-        end,
+  group = vim.api.nvim_create_augroup("custom-term-open", { clear = true }),
+  callback = function()
+    -- disable number at terminal ... not to make it awkward
+    -- use window-local options so global preferences are preserved
+    vim.wo.number = false
+    vim.wo.relativenumber = false
+  end,
 })
+
+vim.keymap.set("n", "<C-h>", "<Cmd>TmuxNavigateLeft<CR>", { desc = "Tmux: Left" })
+vim.keymap.set("n", "<C-j>", "<Cmd>TmuxNavigateDown<CR>", { desc = "Tmux: Down" })
+vim.keymap.set("n", "<C-k>", "<Cmd>TmuxNavigateUp<CR>", { desc = "Tmux: Up" })
+vim.keymap.set("n", "<C-l>", "<Cmd>TmuxNavigateRight<CR>", { desc = "Tmux: Right" })
+vim.keymap.set("n", "<C-\\>", "<Cmd>TmuxNavigatePrevious<CR>", { desc = "Tmux: Previous" })

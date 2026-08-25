@@ -5,6 +5,8 @@ return { -- LSP Configuration & Plugins
     "williamboman/mason.nvim",
     "williamboman/mason-lspconfig.nvim",
     "WhoIsSethDaniel/mason-tool-installer.nvim",
+    -- Ensure LSP completion capability bridge is available before lsp-config runs
+    "hrsh7th/cmp-nvim-lsp",
 
     -- Useful status updates for LSP.
     -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
@@ -149,7 +151,7 @@ return { -- LSP Configuration & Plugins
 
       lua_ls = {
         -- cmd = {...},
-        -- filetypes { ...},
+        -- filetypes = {...},
         -- capabilities = {},
         settings = {
           Lua = {

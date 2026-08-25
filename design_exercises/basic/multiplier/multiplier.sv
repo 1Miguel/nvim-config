@@ -35,8 +35,8 @@ module multiplier #(
    */
   parameter int unsigned WIDTH = 32
 ) (
-    input logic [WIDTH:0] a_i, b_i,
-    output logic [WIDTH:0] c_o
+    input logic [WIDTH-1:0] a_i, b_i,
+    output logic [WIDTH-1:0] c_o
   );
   assign c_o = a_i * b_i;
 endmodule

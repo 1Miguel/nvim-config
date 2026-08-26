@@ -1,6 +1,9 @@
 // **************************************************************************************
-// @file fifo_tb.sv
-// @brief simple comparator testbench
+// @file comparator_multi_bit.sv
+// @brief tests the comparator in multi-bit mode
+//
+// @usage
+//    "verilator --cc --build --exe --timing --top-module comparator_multi_bit_tb comparator_multi_bit.sv comparator_multi_bit_tb.sv"
 // **************************************************************************************
 
 // this tests the comparator in multi-bit mode. we will generate random
@@ -29,6 +32,7 @@
 // if you have a software background like me, testbench architecture utilizes
 // message passing, and is a concept no different from what software
 // engineering uses i.e microservices, event driven patterns etc.
+//
 
 //`timescale 1ns/1ps
 
@@ -37,6 +41,13 @@ parameter int N_TRANS = 32;
 
 // sets the bit size of the comparator DUT
 parameter int N_BITS = 32;
+
+interface comparator_if #(parameter int N)();
+  logic [N-1:0] in_0;
+  logic [N-1:0] in_1;
+  logic out;
+  logic clk;
+endinterface
 
 class Transaction #(parameter N);
   // a transaction classs contains generated test parametes the generator
@@ -148,6 +159,12 @@ class Environment;
   // mailbox from dut to monitor/checker
   mailbox_tr_t mbx_dut2chk;
 
+  // once we instantiate environment, we will build everything
+  function new()
+    mbx_gen2drv = new();
+    mbx_dut2chk = new();
+  endfunction
+
   task run();
     fork
       gen.run(N_TRANS);
@@ -164,7 +181,10 @@ module comparator_multi_bit_tb;
   logic [N_BITS-1:0] i_1;
   logic o_eq;
 
-  comparator_multi_bit #(.N(N_BITS)) dut(.i_0(i_0), .i_1(i_1), .o_eq(o_eq));
+  comparator_if #(.N(N_BITS)) dut_if();
+  comparator_multi_bit #(.N(N_BITS)) dut(
+    .i_0(dut_if.in_0), .i_1(dut_if.in_1), .o_eq(dut_if.out)
+  );
 
   initial begin;
     $finish;

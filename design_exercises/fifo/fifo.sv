@@ -50,12 +50,18 @@ module fifo #(
   // the size of [N_PTR:0], this is useful when comparing with levels
   localparam [N_PTR:0] depth = (N_PTR+1)'(DEPTH);
   localparam [N_PTR-1:0] max_idx = (N_PTR)'(depth) - 1;
+
   logic [DEPTH-1:0][N:0] mem;
   logic [N_PTR-1:0] w_idx; // write index ptr
   logic [N_PTR-1:0] r_idx; // read index ptr
+  logic w_data_valid;
+  logic r_data_valid;
 
   assign o_full = (o_level == depth);
   assign o_empty = (o_level == 0);
+  assign o_pop_data = mem[r_idx];
+  assign w_data_valid = (!o_full) & i_push;
+  assign r_data_valid = (!o_empty) & i_pop;
 
   // below is a `procedural block` and is a container for programming
   // statements. the purpose of `procedural block` is to control when these
@@ -92,29 +98,33 @@ module fifo #(
   //
   // @ (posedge clk or negedge rst_n)
   always_ff @(posedge i_clk or negedge i_rst_n) begin: fifo_core
-    if (!i_rst_n) begin
+    if (!i_rst_n) begin : if_n_rst
      w_idx <= 0; 
      r_idx <= 0; 
      o_level <= 0;
-    end
+    end : if_n_rst
     else begin
+      case ({w_data_valid, r_data_valid})
 
-      if (!o_full && i_push) begin
-        mem[w_idx] <= i_push_data;
-        // if not full and there is a push request, push data to fifo
-        o_level <= o_level + 1;
-        // note than when dealing with literals, always make sure that the
-        // prorper format prefix along with the size is explict, in this case
-        // explicitly indiate to add a 1-bit "1".
-        w_idx <= (w_idx == max_idx) ? 0 : (w_idx + 1);
-      end
-
-      if (!o_empty && i_pop) begin
-        o_pop_data <= mem[r_idx];
-        o_level <= o_level - 1;
-        r_idx <= (r_idx == max_idx) ? 0 : (r_idx + 1);
-      end
-
+        2'b10: begin // fifo push
+          // data to be pushed, increment fifo level
+          o_level <= o_level + 1;
+          // move write index pointer
+          w_idx <= (w_idx == max_idx) ? 0 : (w_idx + 1);
+        end
+        2'b01: begin // fifo pop
+          // move write index pointer
+          r_idx <= (r_idx == max_idx) ? 0 : (r_idx + 1);
+          // data to be poped, decrement fifo level
+          o_level <= o_level - 1;
+        end
+        2'b11: begin // fifo push and pop
+          // both read and write, no increment in level
+          w_idx <= (w_idx == max_idx) ? 0 : (w_idx + 1);
+          r_idx <= (r_idx == max_idx) ? 0 : (r_idx + 1);
+        end
+        default: ;
+      endcase
     end
   end: fifo_core
 

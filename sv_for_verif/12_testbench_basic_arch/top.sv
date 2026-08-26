@@ -44,27 +44,117 @@
 //
 // these components are clases modeled as `transactors`. and these components
 // are instantiated and contained inside the `environment`.
-//
-//
 
 `timescale 1ns/1ps
 
-module top;
+parameter int N_BITS = 32;
 
-  bit clk;
+class Transaction #(parameter N);
+  // a transaction classs contains generated test parametes the generator
+  // generates and the driver drives to the dut
+  rand logic [N-1:0] i_0;
+  rand logic [N-1:0] i_1;
+  // this is the output from the dut
+  // ... here's a question, does monitor/checker requires a different
+  // transaction type?
+  logic eq;
+endclass
 
-  clock_gen #(.TICK(5)) clk_gen(.o_clk(clk));
-  
-  initial begin
-    $dumpfile("wave.vcd");
-    $dumpvars(0, tb);
+class Generator;
+  // this generator creates and randomize transaction packet and push the to
+  // the driver, the driver will be the one responsible to drive the DUT
+  mailbox mbx;
+  Transaction #(.N(N_BITS)) tr;
+ 
+  function new(mailbox mbx);
+    this.mbx = mbx;
+  endfunction
 
-    #0
-    $display("begin");
+  task run(int n);
+    repeat (n) begin
+      // create new transaction
+      this.tr = new();
+      // randomize transaction parameters
+      assert(this.tr.randomize());
+      // put this transaction in mailbox
+      mbx.put(this.tr)
+      // delay
+      #10
+    end
+  endtask
 
-    #100
-    $display("stop");
+endclass: Generator
+
+class Driver;
+  // this driver waits for the generator to generate a transaction then drive
+  // the dut based on the transaction parameters
+  mailbox mbx;
+  // transaction handle
+  Transaction #(.N(N_BITS)) tr;
+ 
+  function new(mailbox mbx);
+    this.mbx = mbx;
+  endfunction
+
+  task run(int n);
+    repeat (n) begin
+      // wait until there is new generated transaction
+      this.mbx.get(this.tr)
+    end
+
+endclass
+
+class Checker;
+  // monitor and checker
+  mailbox mbx;
+  // transaction handle
+  Transaction #(.N(N_BITS)) tr;
+ 
+  function new(mailbox mbx);
+    this.mbx = mbx;
+  endfunction
+
+  task run(int n);
+    repeat (n) begin
+      // wait until there is new generated transaction
+      this.mbx.get(this.tr)
+    end
+
+endclass
+
+class Environment;
+
+  // generator component
+  Generator gen;
+  // driver component
+  Driver drv;
+  // checker component, note that we merge monitor and checker
+  Checker chk;
+  // mailbox from generator to driver
+  mailbox mbx_gen2drv:
+  // mailbox from dut to monitor/checker
+  mailbox mbx_dut2chk:
+
+  task run();
+    fork
+      gen.run();
+      drv.run();
+      chk.run();
+    join
+  endtask;
+endclass
+
+module comparator_multi_bit_tb;
+
+  localparam logic [N_BITS-1:0] MAX_I = '1;
+  logic [N_BITS-1:0] i_0;
+  logic [N_BITS-1:0] i_1;
+  logic o_eq;
+
+  comparator_multi_bit #(.N(N_BITS)) dut(.i_0(i_0), .i_1(i_1), .o_eq(o_eq));
+
+  initial begin;
     $finish;
   end
 
-endmodule: top
+endmodule: comparator_multi_bit_tb

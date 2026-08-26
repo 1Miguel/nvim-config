@@ -1,6 +1,6 @@
 // **************************************************************************************
-// @file singleton.sv
-// @brief simple exercise that demonstrate singleton pattern
+// @file transaction.sv
+// @brief simple exercise that demonstrate transaction pattern
 // systemverilog
 //
 // @usage you can execute this with verilator, example command is:

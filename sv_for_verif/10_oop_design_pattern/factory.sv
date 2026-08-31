@@ -1,6 +1,6 @@
 // **************************************************************************************
-// @file transaction.sv
-// @brief simple exercise that demonstrate transaction pattern
+// @file factory.sv
+// @brief simple exercise that demonstrate factory pattern
 // systemverilog
 //
 // @usage you can execute this with verilator, example command is:

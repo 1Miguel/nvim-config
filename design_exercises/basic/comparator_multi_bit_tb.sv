@@ -42,12 +42,13 @@ parameter int N_TRANS = 32;
 // sets the bit size of the comparator DUT
 parameter int N_BITS = 32;
 
-interface comparator_if #(parameter int N)();
+interface comparator_if #(parameter int N=N_BITS)();
   logic [N-1:0] in_0;
   logic [N-1:0] in_1;
   logic out;
   logic clk;
 endinterface
+
 
 class Transaction #(parameter N);
   // a transaction classs contains generated test parametes the generator
@@ -116,8 +117,8 @@ class Driver;
     this.mbx = mbx;
   endfunction
 
-  task run(int n);
-    repeat (n) begin
+  task run();
+    forever begin
       // wait until there is new generated transaction
       this.mbx.get(this.tr);
       $display("driver: %s", tr.repr());
@@ -126,8 +127,30 @@ class Driver;
 
 endclass
 
+class Monitor;
+  // monitor -> checker
+  mailbox_tr_t mbx;
+  // dut interface so we can monitor
+  virtual comparator_if dut_if;
+  // transaction handle
+  Transaction #(.N(N_BITS)) tr;
+
+  function new(mailbox_tr_t mbx, virtual comparator_if dut_if);
+    this.mbx = mbx;
+    this.dut_if = dut_if;
+  endfunction
+
+  task run();
+    forever begin
+      // wait until there is new generated transaction
+      $display("checker: %s", tr.repr());
+    end
+  endtask
+
+endclass
+
 class Checker;
-  // monitor and checker
+  // monitor -> checker
   mailbox_tr_t mbx;
   // transaction handle
   Transaction #(.N(N_BITS)) tr;
@@ -136,10 +159,9 @@ class Checker;
     this.mbx = mbx;
   endfunction
 
-  task run(int n);
-    repeat (n) begin
+  task run();
+    forever begin
       // wait until there is new generated transaction
-      this.mbx.get(this.tr);
       $display("checker: %s", tr.repr());
     end
   endtask
@@ -152,25 +174,32 @@ class Environment;
   Generator gen;
   // driver component
   Driver drv;
-  // checker component, note that we merge monitor and checker
+  // monitor component, monitors the dut interface / ports
+  Monitor mon;
+  // checker component, check the the dut behaviour is correct
   Checker chk;
-  // mailbox from generator to driver
+  // generator -> driver
   mailbox_tr_t mbx_gen2drv;
-  // mailbox from dut to monitor/checker
-  mailbox_tr_t mbx_dut2chk;
+  // monitor -> checker
+  mailbox_tr_t mbx_mon2chk;
 
   // once we instantiate environment, we will build everything
-  function new()
-    mbx_gen2drv = new();
-    mbx_dut2chk = new();
+  function new(virtual comparator_if dut_if);
+    this.mbx_gen2drv = new();
+    this.mbx_mon2chk = new();
+    this.gen = new(this.mbx_gen2drv);
+    this.drv = new(this.mbx_gen2drv);
+    //this.mon = new(this.mbx_mon2chk);
+    this.chk = new(this.mbx_mon2chk);
   endfunction
 
   task run();
     fork
-      gen.run(N_TRANS);
-      drv.run(N_TRANS);
-      chk.run(N_TRANS);
-    join
+      this.gen.run(N_TRANS);
+      this.drv.run();
+      this.mon.run();
+      this.chk.run();
+    join_any
   endtask;
 endclass
 
@@ -181,12 +210,18 @@ module comparator_multi_bit_tb;
   logic [N_BITS-1:0] i_1;
   logic o_eq;
 
-  comparator_if #(.N(N_BITS)) dut_if();
+  // interface instantiation
+  comparator_if dut_if();
+  // dut instantiation
   comparator_multi_bit #(.N(N_BITS)) dut(
     .i_0(dut_if.in_0), .i_1(dut_if.in_1), .o_eq(dut_if.out)
   );
+  // create the environment
+  Environment env;
 
   initial begin;
+    env = new(dut_if);
+    env.run();
     $finish;
   end
 

@@ -1,0 +1,115 @@
+addrmap open_uart {
+
+  default regwidth = 32;
+  default accesswidth = 32;
+
+  reg {
+    field {
+      desc = "Enable the uart peripheral blocks.";
+      sw = w;
+      hw = r;
+      reset = 0;
+    } ENABLE[0:0];
+    field {
+      desc = "Enable interrupts.";
+      sw = w;
+      hw = r;
+      reset = 0;
+    } IRQ_ENABLE[1:1];
+    field {
+      desc = "Reset and flushes the transmit fifo.";
+      sw = w;
+      hw = r;
+      reset = 0;
+    } RESET_TX_FIFO[2:2];
+    field {
+      desc = "Reset and flushes the receive fifo.";
+      sw = w;
+      hw = r;
+      reset = 0;
+    } RESET_RX_FIFO[3:3];
+  } CTRL @ 0x0000;
+
+  reg {
+    field {
+      desc = "Enable or disable parity.";
+      sw = w;
+      hw = r;
+      reset = 0;
+    } PARITY_ENABLE[0:0];
+    field {
+      desc = "Sets the parity to odd parity else even";
+      sw = w;
+      hw = r;
+      reset = 0;
+    } PARITY_ODD[1:1];
+    field {
+      desc = "Sets the number of stop bits (zero-based count).";
+      sw = w;
+      hw = r;
+      reset = 0;
+    } STOP_BIT[2:2];
+  } CONFIG @ 0x0004;
+
+  reg {
+    field {
+      sw = w;
+      hw = r;
+      reset = 0;
+    } TX_DONE[0:0];
+    field {
+      sw = w;
+      hw = r;
+      reset = 0;
+    } TX_FIFO_FULL[1:1];
+    field {
+      sw = w;
+      hw = r;
+      reset = 0;
+    } TX_FIFO_OVERFLOW[2:2];
+    field {
+      sw = w;
+      hw = r;
+      reset = 0;
+    } TX_FIFO_EMPTY[3:3];
+    field {
+      sw = w;
+      hw = r;
+      reset = 0;
+    } RX_RDY[4:4];
+    field {
+      sw = w;
+      hw = r;
+      reset = 0;
+    } RX_FIFO_FULL[5:5];
+    field {
+      sw = w;
+      hw = r;
+      reset = 0;
+    } RX_FIFO_OVERFLOW[6:6];
+    field {
+      sw = w;
+      hw = r;
+      reset = 0;
+    } RX_FIFO_WATERMARK[7:7];
+    field {
+      sw = w;
+      hw = r;
+      reset = 0;
+    } RX_FIFO_EMPTY[8:8];
+  } IRQ_STATUS @ 0x0005;
+
+  reg {
+    field {
+      sw = w;
+      hw = r;
+      reset = 0;
+    } RX_PARITY_ERR[9:9];
+    field {
+      sw = w;
+      hw = r;
+      reset = 0;
+    } RX_PARITY_ERR[9:9];
+  } ERR_STATUS @ 0x0005;
+};
+

@@ -1,0 +1,21 @@
+read_verilog -sv ./rtl/*.sv
+
+hierarchy -top uart_top
+
+proc
+opt
+fsm
+opt
+memory
+opt
+
+techmap
+opt
+
+abc -g simple
+
+clean
+
+write_verilog -sv -noattr -v ./synth/uart_netlist.sv
+
+show -prefix ./synth/uart_schem -format dot

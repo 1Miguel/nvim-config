@@ -29,18 +29,11 @@ source "$ZSH/oh-my-zsh.sh"
 # Environment
 # ─────────────────────────────────────────────
 
-export AARCH64_NONE_EABI="$(find /opt -maxdepth 1 -type d -name 'arm-gnu-toolchain-*-x86_64-aarch64-none-elf' | sort -V | tail -n 1)"
-export ARM_GCC_NONE_EABI="$(find /opt -maxdepth 1 -type d -name 'arm-gnu-toolchain-*-x86_64-arm-none-eabi' | sort -V | tail -n 1)"
 export EDITOR="nvim"
 export VISUAL="nvim"
 
 # PATH
-export PATH="$HOME/bin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.cargo/bin:$PATH"
-export PATH="$ARM_GCC_NONE_EABI/bin:$PATH"
-export PATH="$AARCH64_NONE_EABI/bin:$PATH"
-
+export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 # UVM core
 # export UVM_HOME="$HOME/dev/uvm-core"
 export UVM_HOME="$HOME/dev/uvm-verilator-1800.2-2020.3.1/src/"

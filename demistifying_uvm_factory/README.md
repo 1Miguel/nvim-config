@@ -111,3 +111,6 @@ y='{id:'h1}
 ```
 
 Notice that even though we instantiated multiple object, the instance creation in *Singleton::get_instance()* routine is only executed once? This is because we control the instantiation via the *static Singleton inst* pointer. If an instance is already created, we will not create another but instead, just return the pointer to it.
+
+# **Registry** Pattern
+

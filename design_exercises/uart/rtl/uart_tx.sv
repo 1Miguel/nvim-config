@@ -136,7 +136,6 @@ module uart_tx #(
             next_tick = 0;
             next_shift_cnt = shift_cnt + 1;
             if (next_shift_cnt == MAX_SHIFT_COUNT) begin
-              next_tick = 0;
               // have we transmitted all data bits?
               // decide if go to parity or stop
               next_state = parity_en_i

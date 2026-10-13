@@ -1,3 +1,9 @@
+# Cloning This Repo
+This is a Neovim configuration. Clone it to `~/.config/nvim`:
+```bash
+git clone git@github.com:1Miguel/nvim-config.git "$HOME/.config/nvim"
+```
+
 # TMUX setup
 ----
 ## Installation
@@ -49,7 +55,7 @@ tmux source ~/.tmux.conf
 ## Configuring
 Copy [alacritty.toml](./alacritty.toml)
   * In Windows : `%APPDATA%/alacritty/alacritty.toml`
-  * In Linux : `./config/alacritty/alacritty.toml`
+  * In Linux : `~/.config/alacritty/alacritty.toml`
 
 # ZSH setup
 -----
@@ -95,11 +101,58 @@ git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$
 p10k configure
 ```
 
+# Neovim Setup
+----
+1. Install latest rust
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+2. After installation finish
+``` bash
+source "$HOME/.cargo/env"
+```
+3. Verify via:
+```bash
+rustc --version
+cargo --version
+```
+4. Install latest tree-sitter
+```bash
+cargo install tree-sitter-cli --locked
+```
+
+## Build from source
+1. Install dependencies
+```bash
+sudo apt update
+sudo apt install build-essential cmake curl gettext ninja-build git \
+  libtool libtool-bin autoconf automake pkg-config unzip
+```
+2. Clone source code
+``` bash
+git clone https://github.com/neovim/neovim.git
+cd neovim
+git checkout stable
+```
+3. Build and compile
+```bash
+make CMAKE_BUILD_TYPE=RelWithDebInfo
+```
+4. Then install
+```bash
+sudo make install
+```
+5. Validate
+```bash
+nvim --version
+nvim -c checkhealth
+```
+
 # Installing Font via Shell
 ----
 1. Download NerdFonts
 2. Extract
-3. Put the font in usr/.local/share/fonts
+3. Put the font in `~/.local/share/fonts`
 4. Rebuild font cache by running fc-cache -f -v
 
 ## Example

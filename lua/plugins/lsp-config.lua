@@ -96,8 +96,8 @@ return { -- LSP Configuration & Plugins
         --  For example, in C this would take you to the header
         map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 
-		-- Format opened buffer
-		map("<leader>s", vim.lsp.buf.format, "Auto format buffer")
+        -- Format opened buffer
+        map("<leader>s", vim.lsp.buf.format, "Auto format buffer")
 
         -- The following two autocommands are used to highlight references of the
         -- word under your cursor when your cursor rests there for a little while.
@@ -136,7 +136,20 @@ return { -- LSP Configuration & Plugins
     --  - settings (table): Override the default settings passed when initializing the server.
     --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
     local servers = {
-      -- clangd = {},
+      asm_lsp = {},
+      asmfmt = {},
+      clang_format = {},
+      clangd = {},
+      cortex_debug = {},
+      cpplint = {},
+      cpptools = {},
+      debugpy = {},
+      esbonio = {},
+      flake8 = {},
+      lua_ls = {},
+      shfmt = {},
+      stylua = {},
+
       -- gopls = {},
       -- pyright = {},
       -- rust_analyzer = {},

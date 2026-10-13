@@ -24,3 +24,11 @@ vim.keymap.set("n", "<C-j>", "<Cmd>TmuxNavigateDown<CR>", { desc = "Tmux: Down" 
 vim.keymap.set("n", "<C-k>", "<Cmd>TmuxNavigateUp<CR>", { desc = "Tmux: Up" })
 vim.keymap.set("n", "<C-l>", "<Cmd>TmuxNavigateRight<CR>", { desc = "Tmux: Right" })
 vim.keymap.set("n", "<C-\\>", "<Cmd>TmuxNavigatePrevious<CR>", { desc = "Tmux: Previous" })
+
+vim.keymap.set({ "n", "x" }, "<leader>sv", function()
+  require("grug-far").open({ visualSelectionUsage = "auto-detect" })
+end, { desc = "grug-far: Search within range" })
+
+vim.keymap.set({ "n", "x" }, "<leader>sf", function()
+  require("grug-far").open({ prefills = { paths = vim.fn.expand("%") } })
+end, { desc = "grug-far: Search within range" })

@@ -42,6 +42,7 @@ or in existing `tmux` session, run
 ```
 tmux source ~/.tmux.conf
 ```
+then install plugins via `<Ctlr-B> + I`
 
 # Alacritty Setup
 -----
